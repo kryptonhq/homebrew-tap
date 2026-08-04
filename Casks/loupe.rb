@@ -1,9 +1,9 @@
 cask "loupe" do
   arch arm: "aarch64", intel: "x64"
 
-  version "0.1.1"
-  sha256 arm:   "357f2c36e33dafc2bf2adc5a717f6dc8792d7f8fdb39d0dfbd93434d01ec652a",
-         intel: "98c5c14b32629c4f80061f3bd9996872b0e7bc7fa265579b1c48ef4415d4f0ba"
+  version "0.1.2"
+  sha256 arm:   "08cd2552aeae6d97c4d5296cf840a3c01bd9d4db84d82785f985e3004eed806c",
+         intel: "8f78637213c7c01022d335b5dd63a62ccac95170b63f72349d0cdb383071e946"
 
   url "https://github.com/kryptonhq/loupe/releases/download/v#{version}/Loupe_#{version}_#{arch}.dmg",
       verified: "github.com/kryptonhq/loupe/"
