@@ -1,9 +1,9 @@
 cask "loupe" do
   arch arm: "aarch64", intel: "x64"
 
-  version "0.1.2"
-  sha256 arm:   "08cd2552aeae6d97c4d5296cf840a3c01bd9d4db84d82785f985e3004eed806c",
-         intel: "8f78637213c7c01022d335b5dd63a62ccac95170b63f72349d0cdb383071e946"
+  version "0.1.5"
+  sha256 arm:   "92a31f01210f1897e342743c6d34d9bda9f5c67feaab715e7b65f88e676f06f8",
+         intel: "eb5abd84268b7e283562fa4e91120bcd6d57b1333a48ac0577db6f04670004a9"
 
   url "https://github.com/kryptonhq/loupe/releases/download/v#{version}/Loupe_#{version}_#{arch}.dmg",
       verified: "github.com/kryptonhq/loupe/"
@@ -17,27 +17,31 @@ cask "loupe" do
   # the Finder then refuses to open.
   depends_on macos: ">= :catalina"
 
+  # Loupe updates itself, so Homebrew should not try to manage versions
+  # for it. Without this the two disagree the moment the app updates:
+  # brew still believes the installed version is whatever it last put
+  # there, and `brew upgrade` reinstalls an older build over a newer one.
+  #
+  # The cask is still updated on every release — that is what `brew
+  # install` uses, and what someone on a fresh machine gets.
+  auto_updates true
+
   app "Loupe.app"
 
-  # Said plainly rather than worked around. Loupe is ad-hoc signed but
-  # not notarised, so Gatekeeper refuses it on first open. A cask can
-  # strip the quarantine attribute in a postflight and make that
-  # invisible — this one deliberately does not. Removing a security
-  # attribute on someone's behalf, without them asking, is not a
-  # decision an installer should make quietly.
-  caveats <<~EOS
-    Loupe is not yet notarised by Apple, so macOS will refuse to open it
-    the first time. Either allow it once:
-
-      System Settings -> Privacy & Security -> Open Anyway
-
-    or install without the quarantine attribute:
-
-      brew install --cask --no-quarantine #{token}
-
-    Notarised builds are planned; see
-    https://github.com/kryptonhq/loupe/blob/main/RELEASING.md
-  EOS
+  # No caveats, and no postflight.
+  #
+  # From v0.1.2 the macOS builds are signed with a Developer ID and
+  # notarised, with the ticket stapled — `spctl` reports "accepted,
+  # source=Notarized Developer ID" — so there is nothing for the user to
+  # allow and nothing to explain.
+  #
+  # Before that this cask carried a caveats block describing how to get
+  # past Gatekeeper. What it never carried was a postflight stripping
+  # the quarantine attribute, which would have hidden the problem
+  # instead of stating it: removing a security attribute on someone's
+  # behalf, without them asking, is not a decision an installer should
+  # make quietly. The fix for "Gatekeeper refuses this" was to earn its
+  # approval, not to route around it.
 
   # Everything Loupe writes, so `brew uninstall --zap` leaves nothing.
   # `settings.json` lives in the Application Support directory; the
