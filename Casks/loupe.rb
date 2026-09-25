@@ -5,17 +5,13 @@ cask "loupe" do
   sha256 arm:   "15339c165bdf8090b087bdab6eb7050a94065068f63c5990944d420564407847",
          intel: "db98df8cfb7f35f2402f3115b91fe0f3cf98817c7219b142fc678c070ecb6c3c"
 
-  url "https://github.com/kryptonhq/loupe/releases/download/v#{version}/Loupe_#{version}_#{arch}.dmg",
-      verified: "github.com/kryptonhq/loupe/"
-
+  # No `verified:` — the download and the homepage are the same GitHub
+  # repository, which Homebrew checks by default, and Homebrew 7
+  # deprecated passing it.
+  url "https://github.com/kryptonhq/loupe/releases/download/v#{version}/Loupe_#{version}_#{arch}.dmg"
   name "Loupe"
   desc "Open-source desktop client for Kubernetes"
   homepage "https://github.com/kryptonhq/loupe"
-
-  # Matches `bundle.macOS.minimumSystemVersion` in tauri.conf.json, which
-  # is Tauri v2's own floor. If the two drift, Homebrew installs a build
-  # the Finder then refuses to open.
-  depends_on macos: ">= :catalina"
 
   # Loupe updates itself, so Homebrew should not try to manage versions
   # for it. Without this the two disagree the moment the app updates:
@@ -25,6 +21,11 @@ cask "loupe" do
   # The cask is still updated on every release — that is what `brew
   # install` uses, and what someone on a fresh machine gets.
   auto_updates true
+  # No version: the app's floor, 10.15, is below anything Homebrew 7
+  # runs on, and Homebrew 7 disabled `macos: ">= :catalina"` outright —
+  # which made `brew upgrade` refuse the whole cask. Add one back only if
+  # `minimumSystemVersion` in tauri.conf.json rises above that.
+  depends_on :macos
 
   app "Loupe.app"
 
